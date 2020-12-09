@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import SongList from './SongList';
 import CreateSongForm from './CreateSongForm';
-import EditDogModal from './EditDogModal';
+import EditSongModal from './EditSongModal';
 import { Grid } from 'semantic-ui-react';
 
 class SongContainer extends Component {
@@ -71,9 +71,37 @@ class SongContainer extends Component {
     this.setState({
       songToEdit: {
         ...this.state.songToEdit,
-        [e.currentTarget.title]: e.currentTarget.value,
+        [e.currentTarget.name]: e.currentTarget.value,
       },
     });
+  };
+  closeAndEdit = async (e) => {
+    e.preventDefault();
+    try {
+      const editResponse = await axios.put(
+        process.env.REACT_APP_FLASK_API_URL +
+          '/api/v1/songs/' +
+          this.state.songToEdit.id,
+        this.state.songToEdit
+      );
+  
+      console.log(editResponse, ' parsed edit');
+  
+      const newSongArrayWithEdit = this.state.songs.map((song) => {
+        if (song.id === editResponse.data.data.id) {
+          song = editResponse.data.data;
+        }
+  
+        return song;
+      });
+  
+      this.setState({
+        showEditModal: false,
+        songs: newSongArrayWithEdit,
+      });
+    } catch (err) {
+      console.log(err);
+    }
   };
   deleteSong = async (id) => {
     console.log(id);
@@ -89,11 +117,12 @@ class SongContainer extends Component {
       <Grid columns={2} divided textAlign='center' style={{ height: '100%' }} verticalAlign='top' stackable>
         <Grid.Row>
           <Grid.Column>
-            <DogList dogs={this.state.dogs} deleteDog={this.deleteDog} openAndEdit={this.openAndEdit}/>
+            <SongList songs={this.state.songs} deleteSong={this.deleteSong} openAndEdit={this.openAndEdit}/>
           </Grid.Column>
           <Grid.Column>
-           <CreateDogForm addDog={this.addDog}/>
+           <CreateSongForm addSong={this.addSong}/>
           </Grid.Column>
+          <EditSongModal handleEditChange={this.handleEditChange} open={this.state.showEditModal} songToEdit={this.state.songToEdit} closeAndEdit={this.closeAndEdit}/>
         </Grid.Row>
       </Grid>
       )
