@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import SongList from './SongList';
 import CreateSongForm from './CreateSongForm';
+import EditDogModal from './EditDogModal';
 import { Grid } from 'semantic-ui-react';
 
 class SongContainer extends Component {
@@ -63,6 +64,14 @@ class SongContainer extends Component {
       showEditModal: true,
       songToEdit: {
         ...songFromTheList,
+      },
+    });
+  };
+  handleEditChange = (e) => {
+    this.setState({
+      songToEdit: {
+        ...this.state.songToEdit,
+        [e.currentTarget.title]: e.currentTarget.value,
       },
     });
   };
