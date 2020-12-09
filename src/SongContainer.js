@@ -9,7 +9,7 @@ class SongContainer extends Component {
     super(props);
     this.state = {
       songs: [],
-      dogToEdit: {
+      songToEdit: {
         title: '',
         album: '',
         artist: '',
@@ -56,20 +56,16 @@ class SongContainer extends Component {
       console.log('error', err);
     }
   };
-  render(){
-    return (
-      <Grid columns={2} divided textAlign='center' style={{ height: '100%' }} verticalAlign='top' stackable>
-        <Grid.Row>
-          <Grid.Column>
-            <SongList songs={this.state.songs} deleteSong={this.deleteSong}/>
-          </Grid.Column>
-          <Grid.Column>
-           <CreateSongForm addSong={this.addSong}/>
-          </Grid.Column>
-        </Grid.Row>
-      </Grid>
-      )
-  }
+  openAndEdit = (songFromTheList) => {
+    console.log(songFromTheList, ' songToEdit  ');
+  
+    this.setState({
+      showEditModal: true,
+      songToEdit: {
+        ...songFromTheList,
+      },
+    });
+  };
   deleteSong = async (id) => {
     console.log(id);
     const deleteSongResponse = await axios.delete(
@@ -79,5 +75,19 @@ class SongContainer extends Component {
     this.setState({ songs: this.state.songs.filter((song) => song.id !== id) });
     console.log(deleteSongResponse, ' response from Flask server');
   };
+  render(){
+    return (
+      <Grid columns={2} divided textAlign='center' style={{ height: '100%' }} verticalAlign='top' stackable>
+        <Grid.Row>
+          <Grid.Column>
+            <DogList dogs={this.state.dogs} deleteDog={this.deleteDog} openAndEdit={this.openAndEdit}/>
+          </Grid.Column>
+          <Grid.Column>
+           <CreateDogForm addDog={this.addDog}/>
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
+      )
+  }
 }
 export default SongContainer;
