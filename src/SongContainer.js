@@ -9,6 +9,13 @@ class SongContainer extends Component {
     super(props);
     this.state = {
       songs: [],
+      dogToEdit: {
+        title: '',
+        album: '',
+        artist: '',
+        id: ''
+      },
+      showEditModal: false
     };
   }
   componentDidMount() {
